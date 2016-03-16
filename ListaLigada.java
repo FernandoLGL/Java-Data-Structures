@@ -34,7 +34,7 @@ public class ListaLigada {
 		}
 	}
 	public void remover(int k){
-		
+		acharIesimo(k) = null;
 	}
 	public void imprimir(){
 		
@@ -64,10 +64,13 @@ public class ListaLigada {
 		}
 		
 	}
-	public int acharIesimo(int k){
-		return 0;
+	public Node acharIesimo(int k){
+		return null;
 	}
 	public void consultar(int k){
+		System.out.println("O item eh o seguinte:\n\nInformacao contida:" + acharIesimo(k).getInfo());
+		System.out.println("O node eh: " + acharIesimo(k).toString());
+		System.out.println("O proximo node eh: " + acharIesimo(k).getNext().toString());
 		
 	}
 	
