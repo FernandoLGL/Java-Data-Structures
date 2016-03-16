@@ -10,6 +10,16 @@ public class ListaLigada {
 		Node novo = new Node(info);
 		inicio = novo;
 	}
+	
+	public static void ordenar(){
+		if(inicio != null){
+			return;
+		}else if(inicio.getNext == null){
+			return;
+		}else{
+			//codigo para ordenar
+		}	
+	}
 
 	public void adicionar(int info){
 		//Node da info
@@ -32,9 +42,11 @@ public class ListaLigada {
 				aux.setNext(novo);
 
 		}
+		ordenar();
 	}
 	public void remover(int k){
 		acharIesimo(k) = null;
+		ordenar();
 	}
 	public void imprimir(){
 		
