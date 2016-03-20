@@ -1,0 +1,32 @@
+public void ordenar() {
+		if (inicio == null) {
+			// Pra quem estiver lendo isso, vai ter um Kirby novo com robô
+			System.out.println("A lista esta vazia!!");
+		} else {
+			Node aux = inicio;
+			Node aux2 = inicio.getNext();
+			// percorrendo a lista atras do ultimo elemento
+			while (aux2 != null) {
+				int aux3;
+				Node aux4 = inicio;
+				if (aux.getInfo() > aux2.getInfo()) {
+					aux3 = aux.getInfo();
+					aux.setInfo(aux2.getInfo());
+					aux2.setInfo(aux3);
+					while(aux4.getNext() != aux.getNext()){
+						int aux5;
+						if(aux4.getInfo()>aux.getInfo()){
+							aux5 = aux4.getInfo();
+							aux4.setInfo(aux.getInfo());
+							aux.setInfo(aux5);
+						}
+						aux4=aux4.getNext();
+					}
+				}
+				aux = aux.getNext();
+				aux2 = aux2.getNext();
+
+			}
+
+		}
+	}
