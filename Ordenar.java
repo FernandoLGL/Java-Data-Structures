@@ -1,4 +1,4 @@
-public void ordernar() {
+public void ordenar() {
 		for (int z = 0; z < 15; z++) {
 			int aux;
 			if (repositorio[z] > repositorio[z + 1]) {
