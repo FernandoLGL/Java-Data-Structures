@@ -57,14 +57,16 @@ public class Menu {
 				}
 			}catch(InputMismatchException e){
 				System.out.println("Comando invalido!");
+				break;
 			} catch (ListaCheiaException e) {
 				System.out.println(e.getMessage());
 			} catch (ListaVaziaException e) {
 				System.out.println(e.getMessage());
 			} catch (ValorInvalidoException e) {
 				System.out.println(e.getMessage());
+			}catch(RuntimeException e){
+				System.out.println(e.getMessage());
 			}
 		}
 	}
-
 }
