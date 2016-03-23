@@ -1,6 +1,7 @@
 package lista;
 
 //imports
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import excecoes.*;
@@ -8,22 +9,27 @@ import excecoes.*;
 public class ListaArray {
 	//atributos
 	private Integer[] repositorio;
-	private int contador;
+	private int contador = 0;
 	private int tamanho;
 	
 	//construtor1
 	public ListaArray(){
 		
-		Scanner sc = new Scanner(System.in);
-		System.out.println("Qual vai ser o tamanho do array?");
-		tamanho = sc.nextInt();
-		
-		if(tamanho == 0){
-			System.out.println("O seu array nao pode ser de tamanho 0! O tamanho padrao(5) foi selecionado.");
-			tamanho = 5;
+		try{
+			Scanner sc = new Scanner(System.in);
+			System.out.println("Qual vai ser o tamanho do array?");
+			tamanho = sc.nextInt();
+			
+			if(tamanho == 0){
+				System.out.println("O seu array nao pode ser de tamanho 0! O tamanho padrao(5) foi selecionado.");
+				tamanho = 5;
+			}
+			
+			repositorio = new Integer[tamanho];
+		}catch(InputMismatchException  e){
+			System.out.println("Invalido!");
+			System.exit(1);
 		}
-		
-		repositorio = new Integer[tamanho];
 	}
 	//construtor2
 	public ListaArray(int info){
@@ -64,7 +70,6 @@ public class ListaArray {
 			throw new ListaVaziaException("A lista se encontra vazia");
 		}
 		
-		ordenar();
 		System.out.println("A lista eh: ");
 		for(int i = 0; i < contador; i++){
 			if(repositorio[i] != null){
@@ -94,6 +99,11 @@ public class ListaArray {
 			throw new ListaCheiaException("A lista esta cheia.");
 		}
 		
+		for(int i = 0; i < contador; i++){
+			if(repositorio[i] == k)
+				throw new RuntimeException("Ja existe esse numero na lista");
+		}
+		
 		repositorio[contador] = k;
 		contador++;
 		ordenar();
@@ -101,11 +111,10 @@ public class ListaArray {
 	
 	//metodo consultar implementado com Busca Binaria
 	public int consultar(int k) throws ValorInvalidoException{
-		ordenar();
 		int comeco = 0;
 		int topo = contador - 1;
 		
-		while(comeco <= topo){
+		do{
 			if(repositorio[comeco] == k){
 	        	return repositorio[comeco];
 			}else if(repositorio[comeco] > k){
@@ -113,7 +122,7 @@ public class ListaArray {
 			}else if(repositorio[comeco] < k){
 				comeco++;
 			}
-		}
+		}while(comeco <= topo);
 		throw new ValorInvalidoException("O valor eh invalido.");
 	}
 	//metodo acharIesimo
@@ -123,13 +132,10 @@ public class ListaArray {
 			throw new ValorInvalidoException("Valor invalido!");
 		}
 		
-		ordenar();
-		
 		return repositorio[k-1];
 	}
 	//metodo remover
 	public void remover(int k) throws ListaVaziaException{
-		ordenar();
 		if(contador == 0){
 			throw new ListaVaziaException("A lista esta vazia.");
 		}
@@ -139,10 +145,10 @@ public class ListaArray {
 				for(int j = i; j < contador; j++){
 					repositorio[j] = repositorio[j + 1];
 				}
+				contador--;
 				return;
 			}
 		}
 		System.out.println("Invalido!!");
-		contador--;
 	}
-}	
+}
