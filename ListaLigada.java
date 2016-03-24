@@ -14,12 +14,13 @@ public class ListaLigada {
 		// Node da info
 		Node novo = new Node(info);
 		// ver se já existe um node com essa informação
-		if(consultarBoolean(info)){
-			throw new NodeJaExistenteException("Um Node com essa informação já existe na Lista");
-		}
 		// ver se a lista ta vazia
 		if (inicio == null) {
 			inicio = novo;
+		}
+		// ver se já existe um node com essa informação
+		else if (consultarBoolean(info)) {
+			throw new NodeJaExistenteException("Um Node com essa informação já existe na Lista");
 		}
 		// se a lista tiver apenas 1 elemento
 		else if (inicio.getNext() == null) {
@@ -39,27 +40,34 @@ public class ListaLigada {
 
 	public void remover(int k) throws ListaVaziaException, NodeInexistenteException {
 		// se a lista estiver vazia
+		Node teste1;
+		Node teste2;
+		int aux = consultarPosicao(k);
 		if (inicio == null) {
 			throw new ListaVaziaException("A lista esta vazia");
 		}
 		// se ela tiver apenas o inicio
-		else if (inicio.getNext() == null) {
-			inicio = null;
-		} else {
+		else {
 			// removendo o node(garbage fazendo seu trabalho)
-			Node teste1;
-			Node teste2;
-			int aux = consultarPosicao(k);
-			teste1 = acharIesimo(aux - 1);
-			teste2 = acharIesimo(aux + 1);
-			// se o elemento for o ultimo da lista
-			if (teste2 == null) {
-				teste1.setNext(null);
+			if (inicio.getInfo() == k) {
+				if (inicio.getNext() != null) {
+					inicio = inicio.getNext();
+					return;
+				} else {
+					inicio = null;
+					return;
+				}
 			}
-			// removido
-			else {
-				teste1.setNext(teste2);
-			}
+		}
+		teste1 = acharIesimo(aux - 1);
+		teste2 = acharIesimo(aux);
+		// se o elemento for o ultimo da lista
+		if (teste2.getNext() == null) {
+			teste1.setNext(null);
+		}
+		// removido
+		else {
+			teste1.setNext(teste2.getNext());
 		}
 	}
 
@@ -113,7 +121,7 @@ public class ListaLigada {
 
 	public void consultar(int k) throws ListaVaziaException, NodeInexistenteException {
 		if (inicio == null) {
-			//lista vazia
+			// lista vazia
 			throw new ListaVaziaException("A lista esta vazia");
 		} else {
 			Node aux = inicio;
@@ -136,34 +144,30 @@ public class ListaLigada {
 	}
 
 	private void ordenar() throws ListaVaziaException {
-		if (inicio == null) {
-			//lista vazia
-			throw new ListaVaziaException("A lista esta vazia");
-		} else {
-			Node aux = inicio;
-			Node aux2 = inicio;
-			//pegando o ultimo elemento da lista
-			while (aux.getNext() != null) {
-				aux = aux.getNext();
-			}
-			//pegando o começo e comparando com o ultimo e trocando posições das informações
-			while (aux2 != aux) {
-				int aux3;
-				//fazendo as mudanças de posição
-				if (aux2.getInfo() > aux.getInfo()) {
-					aux3 = aux2.getInfo();
-					aux2.setInfo(aux.getInfo());
-					aux.setInfo(aux3);
-				}
-				aux2 = aux2.getNext();
-			}
-
+		Node aux = inicio;
+		Node aux2 = inicio;
+		// pegando o ultimo elemento da lista
+		while (aux.getNext() != null) {
+			aux = aux.getNext();
 		}
+		// pegando o começo e comparando com o ultimo e trocando posições das
+		// informações
+		while (aux2 != aux) {
+			int aux3;
+			// fazendo as mudanças de posição
+			if (aux2.getInfo() > aux.getInfo()) {
+				aux3 = aux2.getInfo();
+				aux2.setInfo(aux.getInfo());
+				aux.setInfo(aux3);
+			}
+			aux2 = aux2.getNext();
+		}
+
 	}
-	
-	private int consultarPosicao(int k) throws ListaVaziaException, NodeInexistenteException{
+
+	private int consultarPosicao(int k) throws ListaVaziaException, NodeInexistenteException {
 		if (inicio == null) {
-			//lista vazia
+			// lista vazia
 			throw new ListaVaziaException("A lista esta vazia");
 		} else {
 			Node aux = inicio;
@@ -172,66 +176,39 @@ public class ListaLigada {
 			// percorrendo a lista até o ultimo elemento
 			while (aux != null && aux2 != k) {
 				aux = aux.getNext();
-				//caso o elemente n exista 
+				// caso o elemente n exista
 				if (aux == null) {
 					throw new NodeInexistenteException("esse Node nao esta na lista");
 				}
 				aux2 = aux.getInfo();
 				contador++;
 			}
-			//retornando a posicao
+			// retornando a posicao
 			return contador;
-			
-		}
-	}
-	
-	private boolean consultarBoolean(int k) throws ListaVaziaException{
-			if (inicio == null) {
-				//lista vazia
-				throw new ListaVaziaException("A lista esta vazia");
-			} else {
-				Node aux = inicio;
-				int aux2 = inicio.getInfo();
-				// percorrendo a lista até o ultimo elemento
-				while (aux != null && aux2 != k) {
-					aux = aux.getNext();
-					//caso o elemente n exista 
-					if (aux == null) {
-						return false;
-					}
-					aux2 = aux.getInfo();
-				}
-				//retornando se tiver um objeto com a informação 
-				return true;
-			}
-		}
 
-	public static void main(String[] args) {
-		ListaLigada l1 = new ListaLigada(30);
-		try {
-			l1.adicionar(60);
-			l1.adicionar(0);
-			l1.adicionar(90);
-			l1.adicionar(70);
-			l1.adicionar(50);
-			l1.adicionar(100);
-			l1.adicionar(10);
-			l1.adicionar(80);
-			l1.adicionar(40);
-			l1.adicionar(20);
-			l1.imprimir();
-			//l1.adicionar(30);
-			l1.remover(30);
-			l1.imprimir();
-			// l1.remover(14);
-			l1.consultar(100);
-			// l1.consultar(52);
-			System.out.println(l1.acharIesimo(7));
-			// System.out.println(l1.acharIesimo(15));
-			l1.esvaziar();
-			l1.imprimir();
-		} catch (ListaVaziaException | NodeInexistenteException | NodeJaExistenteException e) {
-			System.out.println(e.getMessage());
 		}
 	}
+
+	private boolean consultarBoolean(int k) throws ListaVaziaException {
+		if (inicio == null) {
+			// lista vazia
+			throw new ListaVaziaException("A lista esta vazia");
+		} else {
+			Node aux = inicio;
+			int aux2 = inicio.getInfo();
+			// percorrendo a lista até o ultimo elemento
+			while (aux != null && aux2 != k) {
+				aux = aux.getNext();
+				// caso o elemente n exista
+				if (aux == null) {
+					return false;
+				}
+				aux2 = aux.getInfo();
+			}
+			// retornando se tiver um objeto com a informação
+			return true;
+		}
+	}
+
+	
 }
