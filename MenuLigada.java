@@ -1,15 +1,8 @@
-package menu;
-//imports
 import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import excecoes.ListaVaziaException;
-import excecoes.NodeInexistenteException;
-import excecoes.NodeJaExistenteException;
-import lista.*;
-//
-public class Menu {
+public class MenuLigada {
 
 	public static void main(String[] args) throws InterruptedException, IOException {
 		Scanner sc = new Scanner(System.in);
