@@ -1,154 +1,212 @@
-package lista;
+public class ListaLigada {
+	private Node inicio;
 
-//imports
-import java.util.InputMismatchException;
-import java.util.Scanner;
+	public ListaLigada() {
 
-import excecoes.*;
+	}
 
-public class ListaArray {
-	//atributos
-	private Integer[] repositorio;
-	private int contador = 0;
-	private int tamanho;
-	
-	//construtor1
-	public ListaArray(){
-		
-		try{
-			Scanner sc = new Scanner(System.in);
-			System.out.println("Qual vai ser o tamanho do array?");
-			tamanho = sc.nextInt();
-			
-			if(tamanho == 0){
-				System.out.println("O seu array nao pode ser de tamanho 0! O tamanho padrao(5) foi selecionado.");
-				tamanho = 5;
+	public ListaLigada(int info) {
+		Node novo = new Node(info);
+		inicio = novo;
+	}
+
+	public void adicionar(int info) throws ListaVaziaException, NodeJaExistenteException {
+		// Node da info
+		Node novo = new Node(info);
+		// ver se já existe um node com essa informação
+		// ver se a lista ta vazia
+		if (inicio == null) {
+			inicio = novo;
+		}
+		// ver se já existe um node com essa informação
+		else if (consultarBoolean(info)) {
+			throw new NodeJaExistenteException("Um Node com essa informação já existe na Lista");
+		}
+		// se a lista tiver apenas 1 elemento
+		else if (inicio.getNext() == null) {
+			inicio.setNext(novo);
+		}
+		// se a lista tiver +1 elemento
+		else {
+			Node aux = inicio.getNext();
+			// percorrendo a lista atras do ultimo elemento
+			while (aux.getNext() != null) {
+				aux = aux.getNext();
 			}
-			
-			repositorio = new Integer[tamanho];
-		}catch(InputMismatchException  e){
-			System.out.println("Invalido!");
-			System.exit(1);
+			aux.setNext(novo);
 		}
-	}
-	//construtor2
-	public ListaArray(int info){
-		
-		Scanner sc = new Scanner(System.in);
-		System.out.println("Qual vai ser o tamanho do array?");
-		tamanho = sc.nextInt();
-		
-		if(tamanho == 0){
-			System.out.println("O seu array nao pode ser de tamanho 0! O tamanho padrao(5) foi selecionado.");
-			tamanho = 5;
-		}
-		
-		repositorio = new Integer[tamanho];
-		repositorio[0] = info;
-		contador++;
-		
-	}
-	//algoritmo de ordenacao
-	public void ordenar() {
-		for (int z = 0; z < contador; z++) {
-			int aux;
-			for (int i = z; i != 0; i--) {
-				if (repositorio[z - i] > repositorio[z]) {
-					aux = repositorio[z - i];
-					repositorio[z - i] = repositorio[z];
-					repositorio[z] = aux;
-				}
-
-			}
-		}
-	}
-	
-	//metodo imprimir
-	public void imprimir() throws ListaVaziaException{
-		
-		if(contador == 0){
-			throw new ListaVaziaException("A lista se encontra vazia");
-		}
-		
-		System.out.println("A lista eh: ");
-		for(int i = 0; i < contador; i++){
-			if(repositorio[i] != null){
-				System.out.print(repositorio[i] + " ");
-			}
-		}
-		
-	}
-	//metodo esvaziar
-	public void esvaziar() throws ListaVaziaException{
-		
-		if(contador == 0){
-			throw new ListaVaziaException("A lista ja esta vazia.");
-		}
-		
-		for(int i = 0; i < contador; i++){
-			repositorio[i] = null;
-		}
-		
-		contador = 0;
-		System.out.println("Lista esvaziada.");
-	}
-	//metodo adicionar
-	public void adicionar(int k) throws ListaCheiaException{
-		
-		if(contador == tamanho){
-			throw new ListaCheiaException("A lista esta cheia.");
-		}
-		
-		for(int i = 0; i < contador; i++){
-			if(repositorio[i] == k)
-				throw new RuntimeException("Ja existe esse numero na lista");
-		}
-		
-		repositorio[contador] = k;
-		contador++;
 		ordenar();
 	}
-	
-	//metodo consultar implementado com Busca Binaria
-	public int consultar(int k) throws ValorInvalidoException{
-		int comeco = 0;
-		int topo = contador - 1;
-		
-		do{
-			if(repositorio[comeco] == k){
-	        	return repositorio[comeco];
-			}else if(repositorio[comeco] > k){
-				topo--;
-			}else if(repositorio[comeco] < k){
-				comeco++;
-			}
-		}while(comeco <= topo);
-		throw new ValorInvalidoException("O valor eh invalido.");
-	}
-	//metodo acharIesimo
-	public int acharIesimo(int k) throws ValorInvalidoException{
-		
-		if( (k <= 0) || (k > tamanho) || (repositorio[k-1] == null) ){
-			throw new ValorInvalidoException("Valor invalido!");
+
+	public void remover(int k) throws ListaVaziaException, NodeInexistenteException {
+		// se a lista estiver vazia
+		Node teste1;
+		Node teste2;
+		int aux = consultarPosicao(k);
+		if (inicio == null) {
+			throw new ListaVaziaException("A lista esta vazia");
 		}
-		
-		return repositorio[k-1];
-	}
-	//metodo remover
-	public void remover(int k) throws ListaVaziaException{
-		if(contador == 0){
-			throw new ListaVaziaException("A lista esta vazia.");
-		}
-		
-		for(int i = 0; i < contador; i++){
-			if(repositorio[i] == k){
-				for(int j = i; j < contador; j++){
-					repositorio[j] = repositorio[j + 1];
+		// se ela tiver apenas o inicio
+		else {
+			// removendo o node(garbage fazendo seu trabalho)
+			if (inicio.getInfo() == k) {
+				if (inicio.getNext() != null) {
+					inicio = inicio.getNext();
+					return;
+				} else {
+					inicio = null;
+					return;
 				}
-				contador--;
-				return;
 			}
 		}
-		System.out.println("Invalido!!");
+		teste1 = acharIesimo(aux - 1);
+		teste2 = acharIesimo(aux);
+		// se o elemento for o ultimo da lista
+		if (teste2.getNext() == null) {
+			teste1.setNext(null);
+		}
+		// removido
+		else {
+			teste1.setNext(teste2.getNext());
+		}
+	}
+
+	public void imprimir() throws ListaVaziaException {
+		// se a lista for vazia
+		if (inicio == null) {
+			throw new ListaVaziaException("A lista esta vazia");
+		} else {
+			Node aux = inicio.getNext();
+			System.out.println(inicio.getInfo());
+			// percorrendo a lista atras do ultimo elemento
+			while (aux != null) {
+				System.out.println(aux.getInfo());
+				aux = aux.getNext();
+			}
+		}
+
+	}
+
+	public void esvaziar() throws ListaVaziaException {
+		// se a lista for vazia
+		if (inicio == null) {
+			throw new ListaVaziaException("A lista esta vazia");
+		} else {
+			// esvaziando(garbage fazendo seu trabalho)
+			inicio = null;
+		}
+
+	}
+
+	public Node acharIesimo(int k) throws ListaVaziaException, NodeInexistenteException {
+		// se a lista for vazia
+		if (inicio == null) {
+			throw new ListaVaziaException("A lista esta vazia");
+		} else {
+			Node aux = inicio;
+			int contador = 1;
+			// percorrendo a lista atras do ultimo elemento
+			while (aux != null && contador != k) {
+				aux = aux.getNext();
+				// se a posiçao for maior que o da lista
+				if (aux == null) {
+					throw new NodeInexistenteException("essa posição esta vazia");
+				}
+				contador++;
+			}
+			// voltando Node
+			return aux;
+		}
+	}
+
+	public void consultar(int k) throws ListaVaziaException, NodeInexistenteException {
+		if (inicio == null) {
+			// lista vazia
+			throw new ListaVaziaException("A lista esta vazia");
+		} else {
+			Node aux = inicio;
+			int aux2 = inicio.getInfo();
+			int contador = 1;
+			// percorrendo a lista atras do ultimo elemento
+			while (aux != null && aux2 != k) {
+				aux = aux.getNext();
+				// se o Node n estiver na lista
+				if (aux == null) {
+					throw new NodeInexistenteException("esse Node nao esta na lista");
+				}
+				aux2 = aux.getInfo();
+				contador++;
+			}
+			// consultando
+			System.out.println("O nó esta na posição: " + contador + "\nSua informação é: " + aux2 + "\nO proximo é: "
+					+ aux.getNext());
+		}
+	}
+
+	private void ordenar() throws ListaVaziaException {
+		Node aux = inicio;
+		Node aux2 = inicio;
+		// pegando o ultimo elemento da lista
+		while (aux.getNext() != null) {
+			aux = aux.getNext();
+		}
+		// pegando o começo e comparando com o ultimo e trocando posições das
+		// informações
+		while (aux2 != aux) {
+			int aux3;
+			// fazendo as mudanças de posição
+			if (aux2.getInfo() > aux.getInfo()) {
+				aux3 = aux2.getInfo();
+				aux2.setInfo(aux.getInfo());
+				aux.setInfo(aux3);
+			}
+			aux2 = aux2.getNext();
+		}
+
+	}
+
+	private int consultarPosicao(int k) throws ListaVaziaException, NodeInexistenteException {
+		if (inicio == null) {
+			// lista vazia
+			throw new ListaVaziaException("A lista esta vazia");
+		} else {
+			Node aux = inicio;
+			int aux2 = inicio.getInfo();
+			int contador = 1;
+			// percorrendo a lista até o ultimo elemento
+			while (aux != null && aux2 != k) {
+				aux = aux.getNext();
+				// caso o elemente n exista
+				if (aux == null) {
+					throw new NodeInexistenteException("esse Node nao esta na lista");
+				}
+				aux2 = aux.getInfo();
+				contador++;
+			}
+			// retornando a posicao
+			return contador;
+
+		}
+	}
+
+	private boolean consultarBoolean(int k) throws ListaVaziaException {
+		if (inicio == null) {
+			// lista vazia
+			throw new ListaVaziaException("A lista esta vazia");
+		} else {
+			Node aux = inicio;
+			int aux2 = inicio.getInfo();
+			// percorrendo a lista até o ultimo elemento
+			while (aux != null && aux2 != k) {
+				aux = aux.getNext();
+				// caso o elemente n exista
+				if (aux == null) {
+					return false;
+				}
+				aux2 = aux.getInfo();
+			}
+			// retornando se tiver um objeto com a informação
+			return true;
+		}
 	}
 }
