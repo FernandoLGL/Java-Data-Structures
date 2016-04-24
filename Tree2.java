@@ -7,18 +7,29 @@ public class Tree {
 	public BinaryTreeNode raiz;
 
 	//METODOS SHOWS
-	public void insert(int valor) throws ArvoreVaziaException, ElementoExistenteException {
+	public void insert(int valor) throws ArvoreVaziaException, ElementoExistenteException{
 		BinaryTreeNode aux = raiz;
 		BinaryTreeNode valorNode = new BinaryTreeNode(valor);
-		if(raiz == null) raiz = valorNode;
+		if(raiz == null){
+			raiz = valorNode;
+			return;
+		}
 		else if(exists(valor)) throw new ElementoExistenteException("O elemento ja existe.");
 		else{
-			if(valor > aux.getInfo()){
-				if(aux.getRight() != null) aux = aux.getRight();
-				else aux.setRight(valorNode);
-			}else if (valor < aux.getInfo()){
-				if(aux.getLeft() != null ) aux = aux.getLeft();
-				else aux.setLeft(valorNode);
+			while(true){
+				if(valor > aux.getInfo()){
+					if(aux.getRight() != null) aux = aux.getRight();
+					else{
+						aux.setRight(valorNode);
+						return;
+					}
+				}else if (valor < aux.getInfo()){
+					if(aux.getLeft() != null ) aux = aux.getLeft();
+					else{ 
+						aux.setLeft(valorNode);
+						return;
+					}
+				}
 			}
 		}
 	}
@@ -48,7 +59,8 @@ public class Tree {
 		if(raiz == null) throw new ArvoreVaziaException("A arvore esta vazia");
 		// criando no auxiliar
 		BinaryTreeNode aux = raiz;
-		do {
+
+		while(aux != null){
 			// Mesmo esquema do metodo "find()", porem dessa vez, se encontrado, retornara "true"
 			if(valor == aux.getInfo()) return true;
 			if (valor > aux.getInfo()) {
@@ -56,15 +68,17 @@ public class Tree {
 			} else if(valor < aux.getInfo()) {
 				aux = aux.getLeft();
 			}
-		}while(aux != null);
-		// se chegou no ponto em que aux == null, o valor nao existe na arvore.
+		}
 		return false;
 	}
 
 	public void remove(int valor) throws ArvoreVaziaException, NaoExisteException{
 		BinaryTreeNode aux = find(valor);
 
+		if(!exists(valor)) throw new NaoExisteException("O valor nao existe.");
+
 		if( (aux.getLeft() == null) && (aux.getRight() == null) ){
+			//problema aqui
 			aux = null;
 			return;
 		}else if( ((aux.getRight() == null) && (aux.getLeft() != null)) ){
@@ -102,6 +116,7 @@ public class Tree {
 			}while(auxValor != null);
 			return;
 		}else{
+			//problema aqui OBS: PODE SER QUE OS PROBLEMAS ESTEJAM LIGADOS AO METODO EXISTS() QUE EH CHAMADO PRA TESTAR
 			BinaryTreeNode auxMinimo = aux;
 			BinaryTreeNode aux2 = aux;
 			do{
@@ -119,16 +134,29 @@ public class Tree {
 
 	// PROBLEMA NULLPOINTEREXCEPTION GETFATHER OLHAR DEPOIS
 
-	public BinaryTreeNode getFather(int valor){
+	private BinaryTreeNode getFather(int valor) throws NaoExisteException, ArvoreVaziaException{
 
-		BinaryTreeNode aux = raiz;
+		if(!exists(valor)) throw new NaoExisteException("O valor nao existe.");
+ 		BinaryTreeNode aux = raiz;
+ 		if(aux.getInfo() == valor) throw new RuntimeException("Eh uma raiz.");
 		do {
-			if((aux.getRight().getInfo() == valor) || (aux.getLeft().getInfo() == valor)) return aux;
-			else if (valor > aux.getInfo()) {
+
+			if( (aux.getRight() != null) && (aux.getLeft() != null) ){
+				if((aux.getRight().getInfo() == valor) || (aux.getLeft().getInfo() == valor)) return aux;
+			}
+			else if( (aux.getRight() != null) && (aux.getLeft() == null)){
+				if(aux.getRight().getInfo() == valor) return aux;
+			}
+			else if( (aux.getRight() == null) && (aux.getLeft() != null ) ){
+				if(aux.getLeft().getInfo() == valor) return aux;
+			}
+
+			if (valor > aux.getInfo()) {
 				aux = aux.getRight();
 			} else if(valor < aux.getInfo()) {
 				aux = aux.getLeft();
-			}
+			}	
+
 		}while(aux != null);
 		return null;
 	}
