@@ -10,12 +10,16 @@ public class Tree {
 	public void insert(int valor) throws ArvoreVaziaException, ElementoExistenteException{
 		BinaryTreeNode aux = raiz;
 		BinaryTreeNode valorNode = new BinaryTreeNode(valor);
+		//quando a arvore estiver vazia
 		if(raiz == null){
 			raiz = valorNode;
 			return;
 		}
+
 		else if(exists(valor)) throw new ElementoExistenteException("O elemento ja existe.");
+
 		else{
+			//loop
 			while(true){
 				if(valor > aux.getInfo()){
 					if(aux.getRight() != null) aux = aux.getRight();
@@ -48,7 +52,7 @@ public class Tree {
 				// andando pela arvore em busca do valor, que existe.
 				else if (valor > aux.getInfo()) {
 					aux = aux.getRight();
-				} else if(valor < aux.getInfo()) {
+				} else {
 					aux = aux.getLeft();
 				}
 			}while(true);
@@ -77,27 +81,54 @@ public class Tree {
 
 		if(!exists(valor)) throw new NaoExisteException("O valor nao existe.");
 
-		if( (aux.getLeft() == null) && (aux.getRight() == null) ){
-			//problema aqui
-			aux = null;
+		// se tiver dois filhos
+		if( (aux.getRight() != null) && (aux.getLeft() != null) ){
+			//BinaryTreeNode auxMenor = getMenor();
+			// pai do menor, para nao perder os possiveis filhos do menor
+		//	BinaryTreeNode auxFather = getFather(getMenor().getInfo());
+			// pai do no a ser excluido
+			BinaryTreeNode auxFather2 = getFather(aux.getInfo());
+
+		}
+
+		// se for folha
+		else if( (aux.getLeft() == null) && (aux.getRight() == null) ){
+			//auxiliar2
+			BinaryTreeNode pai = getFather(aux.getInfo());
+			// caso seja o filho da direita que queremos remover
+			if( (pai.getRight() != null) && (pai.getRight().getInfo() == aux.getInfo()) ){
+				pai.setRight(null);
+			}else{
+				pai.setLeft(null);
+			}
+
 			return;
+			// quando tiver apenas um filho e ele estiver na esquerda
 		}else if( ((aux.getRight() == null) && (aux.getLeft() != null)) ){
+			//variaveis auxiliares
 			BinaryTreeNode auxValor = raiz;
 			BinaryTreeNode auxFather;
 			BinaryTreeNode auxFilho;
+			//loop
 			do{
 				if(valor == auxValor.getInfo()){
 					auxFather = getFather(auxValor.getInfo());
-					if(auxFather.getInfo() > auxValor.getInfo()) auxFather.setLeft(auxValor.getLeft());
-					else if(auxFather.getInfo() < auxValor.getInfo()) auxFather.setRight(auxValor.getLeft());
-					auxValor = null;
+					if(auxFather != null){
+						if(auxFather.getInfo() > auxValor.getInfo()) auxFather.setLeft(auxValor.getLeft());
+						else if(auxFather.getInfo() < auxValor.getInfo()) auxFather.setRight(auxValor.getLeft());
+						auxValor = null;
+						// tentou deletar a raiz
+					}else{
+						raiz = raiz.getLeft();
+					}
 				}else if (valor > auxValor.getInfo()) {
 					auxValor = auxValor.getRight();
-				} else if(valor < auxValor.getInfo()) {
+				} else{
 					auxValor = auxValor.getLeft();
 				}
 			}while(auxValor != null);
 			return;
+			//quando tiver apenas um filho e ele estiver na direita
 		}else if( (aux.getRight() != null) && (aux.getLeft() == null) ){
 			BinaryTreeNode auxValor = raiz;
 			BinaryTreeNode auxFather;
@@ -105,9 +136,14 @@ public class Tree {
 			do{
 				if(valor == auxValor.getInfo()){
 					auxFather = getFather(auxValor.getInfo());
-					if(auxFather.getInfo() > auxValor.getInfo()) auxFather.setLeft(auxValor.getRight());
-					else if(auxFather.getInfo() < auxValor.getInfo()) auxFather.setRight(auxValor.getRight());
-					auxValor = null;
+					if(auxFather != null){
+						if(auxFather.getInfo() > auxValor.getInfo()) auxFather.setLeft(auxValor.getRight());
+						else if(auxFather.getInfo() < auxValor.getInfo()) auxFather.setRight(auxValor.getRight());
+						auxValor = null;
+						//foi tentado deletar a raiz
+					}else{
+						raiz = raiz.getRight();
+					}
 				}else if (valor > auxValor.getInfo()) {
 					auxValor = auxValor.getRight();
 				} else if(valor < auxValor.getInfo()) {
@@ -115,30 +151,14 @@ public class Tree {
 				}
 			}while(auxValor != null);
 			return;
-		}else{
-			//problema aqui OBS: PODE SER QUE OS PROBLEMAS ESTEJAM LIGADOS AO METODO EXISTS() QUE EH CHAMADO PRA TESTAR
-			BinaryTreeNode auxMinimo = aux;
-			BinaryTreeNode aux2 = aux;
-			do{
-				auxMinimo = auxMinimo.getRight();
-			}while(auxMinimo.getRight() != null);
-				auxMinimo = getFather(auxMinimo.getInfo());
-			do{
-				auxMinimo = auxMinimo.getLeft();
-			}while(auxMinimo.getLeft() != null);
-			aux2 = auxMinimo;
-			auxMinimo = null;
-			return;
 		}
 	}
-
-	// PROBLEMA NULLPOINTEREXCEPTION GETFATHER OLHAR DEPOIS
 
 	private BinaryTreeNode getFather(int valor) throws NaoExisteException, ArvoreVaziaException{
 
 		if(!exists(valor)) throw new NaoExisteException("O valor nao existe.");
  		BinaryTreeNode aux = raiz;
- 		if(aux.getInfo() == valor) throw new RuntimeException("Eh uma raiz.");
+ 		if(aux.getInfo() == valor) return null;
 		do {
 
 			if( (aux.getRight() != null) && (aux.getLeft() != null) ){
@@ -160,4 +180,33 @@ public class Tree {
 		}while(aux != null);
 		return null;
 	}
+
+//	private BinaryTreeNode getMaior(){
+//
+//	}
+//
+//	private BinaryTreeNode getMenor(){
+//
+//	}
+
+/* EXPLICACAO PARA CAIO!! 
+
+	Ha 3 situacoes para o remover. Sendo elas quando o no eh uma folha, quando o no tem um filho apenas
+	e quando ele tem dois filhos.
+
+	Eh necessario implementar esses metodos getMaior() e getMenor() para usar o remover. Para fazermos um caso geral,
+	pois do jeito que eu estava fazendo antes, nao funcionava quando o no era uma raiz.
+
+	Seria bom tambem utilizar o getMaior() e getMenor() mesmo quando o no possui apenas um filho, dai poderia fazer um if
+	para checar em qual lado estaria o filho.
+
+	Quanto ao getMaior() e getMenor(), o primeiro pega o maior da esquerda e o segundo pega o menor a direita.
+
+	Tenta implementar eles o quanto antes, pois ai vai ficar facil. E assim que terminarmos o remover, ja sabemos
+	como fazer o segundo topico do projeto. E ai eh soh ficar pensando no terceiro.
+
+	Valeu.
+	
+*/
+
 }
