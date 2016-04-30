@@ -101,7 +101,7 @@ public class Tree {
 		BinaryTreeNode dadSubs = getFather(auxSubs.getInfo());
 		// se for Raiz
 		if (aux == raiz) {
-			//Caso o nó substituto seja uma raiz
+			//Caso o nó substituto seja uma folha
 			if (auxSubs.getLeft() == null && auxSubs.getRight() == null) {
 				//deixando nulo o local on a auxiliar que vai servir de substituta ficava e deixando null
 				if (dadSubs.getLeft() == auxSubs)
