@@ -96,12 +96,12 @@ public class Tree {
 		//auxiliares
 		BinaryTreeNode aux = find(a);
 		BinaryTreeNode dad = getFather(a);
-		//auxiliares para fazerem a subistituição
+		//auxiliares para fazerem a subistituiÃ§Ã£o
 		BinaryTreeNode auxSubs = getSubstitute(a);
 		BinaryTreeNode dadSubs = getFather(auxSubs.getInfo());
 		// se for Raiz
 		if (aux == raiz) {
-			//Caso o nó substituto seja uma folha
+			//Caso o nÃ³ substituto seja uma folha
 			if (auxSubs.getLeft() == null && auxSubs.getRight() == null) {
 				//deixando nulo o local on a auxiliar que vai servir de substituta ficava e deixando null
 				if (dadSubs.getLeft() == auxSubs)
@@ -130,8 +130,8 @@ public class Tree {
 		// se tiver um filho(direita)
 		else if (aux.getLeft() == null) {
 			if (aux.getRight().getInfo() == auxSubs.getInfo()) {
-				// se o substituto for filho do nó(ou seja se ele for para
-				// direita e o filho dele não ter filhos a esquerda)
+				// se o substituto for filho do nÃ³(ou seja se ele for para
+				// direita e o filho dele nÃ£o ter filhos a esquerda)
 				if (dad.getLeft().getInfo() == a)
 					dad.setLeft(auxSubs);
 				else if (dad.getRight().getInfo() == a)
@@ -144,7 +144,7 @@ public class Tree {
 				} else {
 					dadSubs.setLeft(null);
 				}
-				// caso o nó a ser removido tiver filho a direita
+				// caso o nÃ³ a ser removido tiver filho a direita
 				auxSubs.setRight(aux.getRight());
 				if (dad.getLeft().getInfo() == a)
 					dad.setLeft(auxSubs);
@@ -154,8 +154,8 @@ public class Tree {
 		}
 		// se tiver um filho(esquerda)
 		else if (aux.getRight() == null) {
-			// se o substituto for filho do nó(ou seja se ele for para esquerda
-			// e o filho dele não ter filhos a direita)
+			// se o substituto for filho do nÃ³(ou seja se ele for para esquerda
+			// e o filho dele nÃ£o ter filhos a direita)
 			if (aux.getLeft().getInfo() == auxSubs.getInfo()) {
 				if (dad.getRight() == aux)
 					dad.setRight(auxSubs);
@@ -169,7 +169,7 @@ public class Tree {
 				} else {
 					dadSubs.setRight(null);
 				}
-				// caso o nó a ser removido tiver filho a direita
+				// caso o nÃ³ a ser removido tiver filho a direita
 				auxSubs.setLeft(aux.getLeft());
 				if (dad.getLeft() == aux)
 					dad.setLeft(auxSubs);
@@ -179,13 +179,13 @@ public class Tree {
 		}
 		// se tiver 2 filhos
 		else if (aux.getLeft() != null && aux.getRight() != null) {
-			//ele vai pra esquerda pois esse é o padrão que vamos usar
-			// se o substituto for filho do nó(ou seja se ele for para esquerda
-			// e o filho dele não ter filhos a direita)
+			//ele vai pra esquerda pois esse Ã© o padrÃ£o que vamos usar
+			// se o substituto for filho do nÃ³(ou seja se ele for para esquerda
+			// e o filho dele nÃ£o ter filhos a direita)
 			if (aux.getLeft().getInfo() == auxSubs.getInfo()) {
-			   // caso o filho a esquerda não tenha filhos a direita
+			   // caso o filho a esquerda nÃ£o tenha filhos a direita
 				if (aux.getRight() != null) {
-					//botando o filho a direita do nó a ser substituido no substituto dele
+					//botando o filho a direita do nÃ³ a ser substituido no substituto dele
 					auxSubs.setRight(aux.getRight());
 				}
 				if (dad.getRight() == aux)
@@ -200,7 +200,7 @@ public class Tree {
 				} else {
 					dadSubs.setRight(null);
 				}
-				//botando os dado do nó removido no substituto
+				//botando os dado do nÃ³ removido no substituto
 				auxSubs.setLeft(aux.getLeft());
 				auxSubs.setRight(aux.getRight());
 				if (dad.getLeft() == aux)
@@ -248,17 +248,17 @@ public class Tree {
 		boolean verif2 = true;
 		do {
 			if (verif1 && verif2) {
-				//veifica se o nó a esquerda não é nulo
+				//veifica se o nÃ³ a esquerda nÃ£o Ã© nulo
 				if (aux.getLeft() != null) {
 					aux = aux.getLeft();
 					verif1 = false;
 				} 
-				//veifica se o nó a direita não é nulo(a 1 verificação já falhou)
+				//veifica se o nÃ³ a direita nÃ£o Ã© nulo(a 1 verificaÃ§Ã£o jÃ¡ falhou)
 				else if (aux.getRight() != null) {
 					aux = aux.getRight();
 					verif2 = false;
 				}
-				//caso ele não tenha filhos
+				//caso ele nÃ£o tenha filhos
 				else {
 					return aux;
 				}
@@ -283,7 +283,7 @@ public class Tree {
 
 	}
 
-	public void printSobrinhos(int valor){
+	public void printSobrinhos(int valor) throws ArvoreVaziaException, NaoExisteException{
 		BinaryTreeNode auxValor = find(valor);
 		BinaryTreeNode aux = raiz;
 		//faz o algoritmo pra percorrer a arvore, exceto que vai conter o seguinte "if":
@@ -296,7 +296,7 @@ public class Tree {
 		}
 	}
 
-	public void getDepth(int valor){
+	public int getDepth(int valor) throws ArvoreVaziaException, NaoExisteException{
 		BinaryTreeNode auxValor = find(valor);
 		BinaryTreeNode aux = raiz;
 		int depth = 0;
@@ -311,15 +311,16 @@ public class Tree {
 			// quando for igual
 			else return depth;
 		}
+		return 0;
 	}
 
-	public boolean isSon(int valorPai, int valorFilho){
+	public boolean isSon(int valorPai, int valorFilho) throws ArvoreVaziaException, NaoExisteException{
 		BinaryTreeNode auxFilho = find(valorFilho);
 		BinaryTreeNode auxPai = find(valorPai);
 		
 		if(  ( auxPai.getRight().getInfo() == auxFilho.getInfo() ) || (auxPai.getLeft().getInfo() == auxFilho.getInfo()) ){
 			return true;
-		}else false;
+		}else return false;
 
 	}
 
