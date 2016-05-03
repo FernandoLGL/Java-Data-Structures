@@ -3,8 +3,8 @@ package arvore;
 import exceptions.*;
 
 public class Tree {
-	// ATRIBUTO SHOW
-	public BinaryTreeNode raiz;
+	//atributo raiz
+	private BinaryTreeNode raiz;
 
 	// METODOS SHOWS
 	public void insert(int valor) throws ArvoreVaziaException, ElementoExistenteException {
@@ -271,7 +271,7 @@ public class Tree {
 					return aux;
 				}
 			} 
-			//pegando o mair filho a esquerda(getMaior())
+			//pegando o maior filho a esquerda(getMaior())
 			else if (verif1) {
 				if (aux.getLeft() != null) {
 					aux = aux.getLeft();
@@ -283,37 +283,44 @@ public class Tree {
 
 	}
 
-	// private BinaryTreeNode getMaior(){
-	//
-	// }
-	//
-	// private BinaryTreeNode getMenor(){
-	//
-	// }
+	public void printSobrinhos(int valor){
+		BinaryTreeNode auxValor = find(valor);
+		BinaryTreeNode aux = raiz;
+		//faz o algoritmo pra percorrer a arvore, exceto que vai conter o seguinte "if":
 
-	/*
-	 * EXPLICACAO PARA CAIO!!
-	 * 
-	 * Ha 3 situacoes para o remover. Sendo elas quando o no eh uma folha,
-	 * quando o no tem um filho apenas e quando ele tem dois filhos.
-	 * 
-	 * Eh necessario implementar esses metodos getMaior() e getMenor() para usar
-	 * o remover. Para fazermos um caso geral, pois do jeito que eu estava
-	 * fazendo antes, nao funcionava quando o no era uma raiz.
-	 * 
-	 * Seria bom tambem utilizar o getMaior() e getMenor() mesmo quando o no
-	 * possui apenas um filho, dai poderia fazer um if para checar em qual lado
-	 * estaria o filho.
-	 * 
-	 * Quanto ao getMaior() e getMenor(), o primeiro pega o maior da esquerda e
-	 * o segundo pega o menor a direita.
-	 * 
-	 * Tenta implementar eles o quanto antes, pois ai vai ficar facil. E assim
-	 * que terminarmos o remover, ja sabemos como fazer o segundo topico do
-	 * projeto. E ai eh soh ficar pensando no terceiro.
-	 * 
-	 * Valeu.
-	 * 
-	 */
+		//caso a profundidade do node auxiliar atual seja maior que a do alvo e o node auxiliar atual nao seja filho do alvo.
+		if( (getDepth(aux.getInfo()) >  getDepth(auxValor.getInfo())) && (!isSon(auxValor.getInfo(), aux.getInfo())) ){
+			System.out.println(aux.getInfo() + ", ");
+		}else{
+			// percorre a arvore usando aux.
+		}
+	}
+
+	public void getDepth(int valor){
+		BinaryTreeNode auxValor = find(valor);
+		BinaryTreeNode aux = raiz;
+		int depth = 0;
+		while(aux != null){
+			if(valor > aux.getInfo()){
+				aux = aux.getRight();
+				depth++;
+			}else if(valor < aux.getInfo()){
+				aux = aux.getLeft();
+				depth++;
+			}
+			// quando for igual
+			else return depth;
+		}
+	}
+
+	public boolean isSon(int valorPai, int valorFilho){
+		BinaryTreeNode auxFilho = find(valorFilho);
+		BinaryTreeNode auxPai = find(valorPai);
+		
+		if(  ( auxPai.getRight().getInfo() == auxFilho.getInfo() ) || (auxPai.getLeft().getInfo() == auxFilho.getInfo()) ){
+			return true;
+		}else false;
+
+	}
 
 }
