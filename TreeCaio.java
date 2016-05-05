@@ -4,41 +4,39 @@ import exceptions.*;
 import java.util.concurrent.*;
 
 public class Tree {
-	// ATRIBUTO SHOW
+	// raiz
 	public BinaryTreeNode raiz;
 
-	// METODOS SHOWS
 	public void insert(int valor) throws ArvoreVaziaException, ElementoExistenteException {
 		BinaryTreeNode aux = raiz;
 		BinaryTreeNode valorNode = new BinaryTreeNode(valor);
 		// quando a arvore estiver vazia
 		if (raiz == null) {
 			raiz = valorNode;
-			System.out.println("raiz: " + valor);
 			return;
 		}
-
+		// se o elemento ja existir na arvore
 		else if (exists(valor))
 			throw new ElementoExistenteException("O elemento ja existe.");
 
 		else {
 			// loop
 			while (true) {
+				// se o valor for maior que o atual valor do auxiliar
 				if (valor > aux.getInfo()) {
+					// nao for nulo, procede pra direita
 					if (aux.getRight() != null) {
-						System.out.println(aux.getInfo() + " direita " + aux.getRight().getInfo());
 						aux = aux.getRight();
+					//se for nulo, usa o set.
 					} else {
-						System.out.println(aux.getInfo() + " direita " + valor + " fim");
 						aux.setRight(valorNode);
 						return;
 					}
+				//mesma logica, desta vez para a esquerda.
 				} else if (valor < aux.getInfo()) {
 					if (aux.getLeft() != null) {
-						System.out.println(aux.getInfo() + " esquerda " + aux.getLeft().getInfo());
 						aux = aux.getLeft();
 					} else {
-						System.out.println(aux.getInfo() + " esquerda " + valor + " fim");
 						aux.setLeft(valorNode);
 						return;
 					}
@@ -80,8 +78,7 @@ public class Tree {
 		BinaryTreeNode aux = raiz;
 
 		while (aux != null) {
-			// Mesmo esquema do metodo "find()", porem dessa vez, se encontrado,
-			// retornara "true"
+			// Mesmo esquema do metodo "find()", porem dessa vez, se encontrado, retornara "true"
 			if (valor == aux.getInfo())
 				return true;
 			if (valor > aux.getInfo()) {
@@ -203,13 +200,15 @@ public class Tree {
 	}
 
 	private BinaryTreeNode getFather(int valor) throws NaoExisteException, ArvoreVaziaException {
+		//se o valor requisitado nao existir na arvore
 		if (!exists(valor))
 			throw new NaoExisteException("O valor nao existe.");
 		BinaryTreeNode aux = raiz;
+		//se o valor for a raiz, nao tem pai.
 		if (aux.getInfo() == valor)
 			return null;
 		do {
-
+			//checando
 			if ((aux.getRight() != null) && (aux.getLeft() != null)) {
 				if ((aux.getRight().getInfo() == valor) || (aux.getLeft().getInfo() == valor))
 					return aux;
@@ -220,7 +219,7 @@ public class Tree {
 				if (aux.getLeft().getInfo() == valor)
 					return aux;
 			}
-
+			// percorrendo
 			if (valor > aux.getInfo()) {
 				aux = aux.getRight();
 			} else if (valor < aux.getInfo()) {
@@ -265,9 +264,11 @@ public class Tree {
 	}
 
 	public int getDepth(int valor) throws ArvoreVaziaException, NaoExisteException {
+		// começando a percorrer pela raiz
 		BinaryTreeNode aux = raiz;
 		int depth = 0;
 		while (aux != null) {
+			//percorrendo e somando depth ate o valor ser igual
 			if (valor > aux.getInfo()) {
 				aux = aux.getRight();
 				depth++;
@@ -285,7 +286,7 @@ public class Tree {
 	public boolean isSon(int valorPai, int valorFilho) throws ArvoreVaziaException, NaoExisteException {
 		BinaryTreeNode auxFilho = find(valorFilho);
 		BinaryTreeNode auxPai = find(valorPai);
-
+		//checando se é filho
 		if ((auxPai.getRight().getInfo() == auxFilho.getInfo()) || (auxPai.getLeft().getInfo() == auxFilho.getInfo())) {
 			return true;
 		} else
@@ -296,7 +297,7 @@ public class Tree {
 	public int getHeight(int valor) throws ArvoreVaziaException, NaoExisteException {
 		//metodo para pegar altura do nó
 		BinaryTreeNode node = find(valor);
-		//Fran : bota Exception aqui
+
 		if (node == null) {
 			return -1;
 		}
@@ -325,7 +326,7 @@ public class Tree {
 		//Atributos
 		BinaryTreeNode nodePrincipal = find(valor);
 		BinaryTreeNode auxNode = find(valor3);
-		//FRAN : botar exception aqui
+
 		if (nodePrincipal == null) {
 			return "";
 		}
@@ -351,19 +352,22 @@ public class Tree {
 	}
 	//Retorna os sobrinhos
 	public String getSobrinhos(int valor) throws ArvoreVaziaException, NaoExisteException{
-		//raiz não tem sobrinhos (FRAN: n sei se precisar ser Exception)
-		if(valor == raiz.getInfo()){
-			return "não tem sobrinhos";
-		}
-		//usando o metodo recursivo para pegar os sobrinhos
-		return printLineTree(raiz.getInfo(),valor,getDepth(valor)+1);
+
+		if(raiz != null){
+			//raiz não tem sobrinhos
+			if(valor == raiz.getInfo()){
+				return "não tem sobrinhos";
+			}
+			//usando o metodo recursivo para pegar os sobrinhos
+			return printLineTree(raiz.getInfo(),valor,getDepth(valor)+1);
+		}else throw new ArvoreVaziaException("A arvore esta vazia.");
 	}
 	
 //metodo para imprimir a partir da profundidade Usado no Imprimir
 	public String printLineTree(int valor, int valor2) throws ArvoreVaziaException, NaoExisteException {
 		//atributos
 		BinaryTreeNode node = find(valor);
-		//FRAN:Bota exception aqui
+		
 		if (node == null) {
 			return "";
 		}
@@ -386,18 +390,19 @@ public class Tree {
 		aux += aux2;
 		return aux;
 	}
-
-	//Fran e contigo
+	
+	
 	public void imprimirTree() throws ArvoreVaziaException, NaoExisteException {
 		int aux = maxHeight();
-		//int i,j;
+
+		// fazendo a matriz
 		for (int i = 0; i<= aux; i++) {
 			for ( int j = 0; j < aux-i; j++) {
 				System.out.print("   ");
 			}
+			//printando
 			System.out.println(printLineTree(this.raiz.getInfo(), i));
 			
 		}
 	}
-
 }
