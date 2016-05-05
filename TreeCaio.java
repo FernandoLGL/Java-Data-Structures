@@ -387,39 +387,17 @@ public class Tree {
 		return aux;
 	}
 
-	
-
-	// private BinaryTreeNode getMaior(){
-	//
-	// }
-	//
-	// private BinaryTreeNode getMenor(){
-	//
-	// }
-
-	/*
-	 * EXPLICACAO PARA CAIO!!
-	 * 
-	 * Ha 3 situacoes para o remover. Sendo elas quando o no eh uma folha,
-	 * quando o no tem um filho apenas e quando ele tem dois filhos.
-	 * 
-	 * Eh necessario implementar esses metodos getMaior() e getMenor() para usar
-	 * o remover. Para fazermos um caso geral, pois do jeito que eu estava
-	 * fazendo antes, nao funcionava quando o no era uma raiz.
-	 * 
-	 * Seria bom tambem utilizar o getMaior() e getMenor() mesmo quando o no
-	 * possui apenas um filho, dai poderia fazer um if para checar em qual lado
-	 * estaria o filho.
-	 * 
-	 * Quanto ao getMaior() e getMenor(), o primeiro pega o maior da esquerda e
-	 * o segundo pega o menor a direita.
-	 * 
-	 * Tenta implementar eles o quanto antes, pois ai vai ficar facil. E assim
-	 * que terminarmos o remover, ja sabemos como fazer o segundo topico do
-	 * projeto. E ai eh soh ficar pensando no terceiro.
-	 * 
-	 * Valeu.
-	 * 
-	 */
+	//Fran e contigo
+	public void imprimirTree() throws ArvoreVaziaException, NaoExisteException {
+		int aux = maxHeight();
+		//int i,j;
+		for (int i = 0; i<= aux; i++) {
+			for ( int j = 0; j < aux-i; j++) {
+				System.out.print("   ");
+			}
+			System.out.println(printLineTree(this.raiz.getInfo(), i));
+			
+		}
+	}
 
 }
