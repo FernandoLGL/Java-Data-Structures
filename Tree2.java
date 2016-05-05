@@ -13,31 +13,28 @@ public class Tree {
 		// quando a arvore estiver vazia
 		if (raiz == null) {
 			raiz = valorNode;
-			System.out.println("raiz: " + valor);
 			return;
 		}
-
+		//vendo se ja existe
 		else if (exists(valor))
 			throw new ElementoExistenteException("O elemento ja existe.");
 
 		else {
 			// loop
 			while (true) {
+				//se o valor for maior que o atual do auxiliar -> vai para a direita, se nao for nula, usa o set.
 				if (valor > aux.getInfo()) {
 					if (aux.getRight() != null) {
-						System.out.println(aux.getInfo() + " direita " + aux.getRight().getInfo());
 						aux = aux.getRight();
 					} else {
-						System.out.println(aux.getInfo() + " direita " + valor + " fim");
 						aux.setRight(valorNode);
 						return;
 					}
+				// caso o valor seja menor.
 				} else if (valor < aux.getInfo()) {
 					if (aux.getLeft() != null) {
-						System.out.println(aux.getInfo() + " esquerda " + aux.getLeft().getInfo());
 						aux = aux.getLeft();
 					} else {
-						System.out.println(aux.getInfo() + " esquerda " + valor + " fim");
 						aux.setLeft(valorNode);
 						return;
 					}
@@ -79,8 +76,7 @@ public class Tree {
 		BinaryTreeNode aux = raiz;
 
 		while (aux != null) {
-			// Mesmo esquema do metodo "find()", porem dessa vez, se encontrado,
-			// retornara "true"
+			// Mesmo esquema do metodo "find()", porem dessa vez, se encontrado, retornara "true"
 			if (valor == aux.getInfo())
 				return true;
 			if (valor > aux.getInfo()) {
@@ -202,14 +198,15 @@ public class Tree {
 	}
 
 	private BinaryTreeNode getFather(int valor) throws NaoExisteException, ArvoreVaziaException {
-
+		//se o valor nao existir na arvore
 		if (!exists(valor))
 			throw new NaoExisteException("O valor nao existe.");
 		BinaryTreeNode aux = raiz;
+		// se for a raiz, nao existe pai.
 		if (aux.getInfo() == valor)
 			return null;
 		do {
-
+			// procurando pelo pai
 			if ((aux.getRight() != null) && (aux.getLeft() != null)) {
 				if ((aux.getRight().getInfo() == valor) || (aux.getLeft().getInfo() == valor))
 					return aux;
@@ -220,7 +217,7 @@ public class Tree {
 				if (aux.getLeft().getInfo() == valor)
 					return aux;
 			}
-
+			// percorrendo a arvore
 			if (valor > aux.getInfo()) {
 				aux = aux.getRight();
 			} else if (valor < aux.getInfo()) {
@@ -231,7 +228,7 @@ public class Tree {
 		return null;
 	}
 
-	public BinaryTreeNode getSubstitute(int a) throws ArvoreVaziaException, NaoExisteException {
+	private BinaryTreeNode getSubstitute(int a) throws ArvoreVaziaException, NaoExisteException {
 		BinaryTreeNode aux = this.find(a);
 		boolean verif = false;
 		do {
@@ -264,46 +261,49 @@ public class Tree {
 
 	}
 
-	public int altura(int a) throws ArvoreVaziaException, NaoExisteException {
-		BinaryTreeNode node = find(a);
-        if (node == null)
-            return 0;
+    public void printSobrinhos(int valor) throws ArvoreVaziaException, NaoExisteException{
+		BinaryTreeNode auxValor = find(valor);
+		BinaryTreeNode aux = raiz;
+		//faz o algoritmo pra percorrer a arvore, exceto que vai conter o seguinte "if":
 
-        return Math.max(altura(node.getLeft().getInfo()),altura(node.getRight().getInfo())) + 1;
-    }
+		//caso a diferenca entre a profundidade do auxiliar e a profundidade do alvo seja 1 e o node auxiliar atual nao seja filho do alvo.
+		if( ( (getDepth(aux.getInfo()) - getDepth(auxValor.getInfo())) == 1 ) && (!isSon(auxValor.getInfo(), aux.getInfo())) ){
+			System.out.println(aux.getInfo() + ", ");
+		}else{
+			// percorre a arvore usando aux.
+		}
+	}
 
+	private int getDepth(int valor) throws ArvoreVaziaException, NaoExisteException{
+		BinaryTreeNode auxValor = find(valor);
+		BinaryTreeNode aux = raiz;
+		int depth = 0;
+		// mesmo esquema de percorrer a arvore, porem somando na variavel depth
+		while(aux != null){
+			if(valor > aux.getInfo()){
+				aux = aux.getRight();
+				depth++;
+			}else if(valor < aux.getInfo()){
+				aux = aux.getLeft();
+				depth++;
+			}
+			// quando for igual
+			else return depth;
+		}
+		return 0;
+	}
 
-// private BinaryTreeNode getMaior(){
-//
-// }
-//
-// private BinaryTreeNode getMenor(){
-//
-// }
+	private boolean isSon(int valorPai, int valorFilho) throws ArvoreVaziaException, NaoExisteException{
+		BinaryTreeNode auxFilho = find(valorFilho);
+		BinaryTreeNode auxPai = find(valorPai);
+		//vendo se eh filho
+		if(  ( auxPai.getRight().getInfo() == auxFilho.getInfo() ) || (auxPai.getLeft().getInfo() == auxFilho.getInfo()) ){
+			return true;
+		}else return false;
 
-/*
- * EXPLICACAO PARA CAIO!!
- * 
- * Ha 3 situacoes para o remover. Sendo elas quando o no eh uma folha, quando o
- * no tem um filho apenas e quando ele tem dois filhos.
- * 
- * Eh necessario implementar esses metodos getMaior() e getMenor() para usar o
- * remover. Para fazermos um caso geral, pois do jeito que eu estava fazendo
- * antes, nao funcionava quando o no era uma raiz.
- * 
- * Seria bom tambem utilizar o getMaior() e getMenor() mesmo quando o no possui
- * apenas um filho, dai poderia fazer um if para checar em qual lado estaria o
- * filho.
- * 
- * Quanto ao getMaior() e getMenor(), o primeiro pega o maior da esquerda e o
- * segundo pega o menor a direita.
- * 
- * Tenta implementar eles o quanto antes, pois ai vai ficar facil. E assim que
- * terminarmos o remover, ja sabemos como fazer o segundo topico do projeto. E
- * ai eh soh ficar pensando no terceiro.
- * 
- * Valeu.
- * 
- */
+	}
 
+	public void print(){
+		// algoritmo pra printar
+	}
 }
