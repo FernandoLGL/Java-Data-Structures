@@ -358,7 +358,8 @@ public class Tree {
 		//usando o metodo recursivo para pegar os sobrinhos
 		return printLineTree(raiz.getInfo(),valor,getDepth(valor)+1);
 	}
-	//metodo para imprimir a partir da profundidade Usado no Imprimir
+	
+//metodo para imprimir a partir da profundidade Usado no Imprimir
 	public String printLineTree(int valor, int valor2) throws ArvoreVaziaException, NaoExisteException {
 		//atributos
 		BinaryTreeNode node = find(valor);
@@ -370,8 +371,8 @@ public class Tree {
 		String aux = "";
 		//imprimindo a linha em questão
 		if (getDepth(valor) == valor2){
-			aux = node.getInfo() + " ";
-		}String aux2 = "";
+			aux = node.getInfo() +"";
+		}String aux2 = " ";
 		//percorrendo a arvore em ordem
 		if (node.getLeft() != null) {
 			//indo pra esquerda 
@@ -384,19 +385,6 @@ public class Tree {
 		//concatenando
 		aux += aux2;
 		return aux;
-	}
-	
-//Fran e contigo
-	public void imprimirTree() throws ArvoreVaziaException, NaoExisteException {
-		int aux = maxHeight();
-		//int i,j;
-		for (int i = 0; i<= aux; i++) {
-			for ( int j = 0; j < aux-i; j++) {
-				System.out.print("\t");
-			}
-			System.out.println(printLineTree(this.raiz.getInfo(), i));
-			
-		}
 	}
 
 	
