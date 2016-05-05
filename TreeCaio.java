@@ -264,22 +264,6 @@ public class Tree {
 
 	}
 
-	public void printSobrinhos(int valor) throws ArvoreVaziaException, NaoExisteException {
-		BinaryTreeNode auxValor = find(valor);
-		BinaryTreeNode aux = raiz;
-		// faz o algoritmo pra percorrer a arvore, exceto que vai conter o
-		// seguinte "if":
-
-		// caso a diferenca entre a profundidade do auxiliar e a profundidade do
-		// alvo seja 1 e o node auxiliar atual nao seja filho do alvo.
-		if (((getDepth(aux.getInfo()) - getDepth(auxValor.getInfo())) == 1)
-				&& (!isSon(auxValor.getInfo(), aux.getInfo()))) {
-			System.out.println(aux.getInfo() + ", ");
-		} else {
-			// percorre a arvore usando aux.
-		}
-	}
-
 	public int getDepth(int valor) throws ArvoreVaziaException, NaoExisteException {
 		BinaryTreeNode aux = raiz;
 		int depth = 0;
@@ -308,72 +292,101 @@ public class Tree {
 			return false;
 
 	}
-
+//metodo para pegar altura do nó
 	public int getHeight(int valor) throws ArvoreVaziaException, NaoExisteException {
+		//metodo para pegar altura do nó
 		BinaryTreeNode node = find(valor);
+		//Fran : bota Exception aqui
 		if (node == null) {
 			return -1;
 		}
+		//vendo se o nó é folha
 		if (node.getLeft() == null && node.getRight() == null)
 			return 0;
+		//atributos
 		int left = 0;
 		int right = 0;
+		//percorrendo arvore em ordem
 		if (node.getLeft() != null)
+			//indo para esquerda e somando enquanto não for nulo
 			left = getHeight(node.getLeft().getInfo()) + 1;
 		if (node.getRight() != null)
+			//indo para direita e somando enquanto não for nulo
 			right = getHeight(node.getRight().getInfo()) + 1;
+		//retornando o maior entre os dois atributos
 		return left > right ? left : right;
 	}
-
+    //metodo para pegar a altura maxima
 	public int maxHeight() throws ArvoreVaziaException, NaoExisteException {
 		return getHeight(raiz.getInfo());
 	}
-
-	public String retornaTree(int valor, int valor3, int valor2) throws ArvoreVaziaException, NaoExisteException {
-		BinaryTreeNode node = find(valor);
+   //metodo para imprimir a partir da profundidade com nó auxiliar
+	public String printLineTree(int valor, int valor3, int valor2) throws ArvoreVaziaException, NaoExisteException {
+		//Atributos
+		BinaryTreeNode nodePrincipal = find(valor);
 		BinaryTreeNode auxNode = find(valor3);
-		if (node == null) {
+		//FRAN : botar exception aqui
+		if (nodePrincipal == null) {
 			return "";
 		}
-		String aux = "";
+		//atributos
+		String auxRetorno = "";
+		String auxSecundaria = "";
+		//condição para pega o linha e retirar os filhos do nó escolhido Usado no getSobrinho
 		if (getDepth(valor) == valor2
 				&& (auxNode.getLeft().getInfo() != valor && auxNode.getRight().getInfo() != valor))
-			aux += node.getInfo() + " ";
-		String aux2 = "";
-		if (node.getLeft() != null) {
-			aux2 += retornaTree(node.getLeft().getInfo(), valor3, valor2);
+			auxRetorno += nodePrincipal.getInfo() + " ";
+		//percorrendo a arvore em ordem
+		if (nodePrincipal.getLeft() != null) {
+			//recursividade para percorer a arvore pela esquerda
+			auxSecundaria += printLineTree(nodePrincipal.getLeft().getInfo(), valor3, valor2);
 		}
-		if (node.getRight() != null) {
-			aux2 += retornaTree(node.getRight().getInfo(), valor3, valor2);
+		if (nodePrincipal.getRight() != null) {
+			//recursividade para percorer a arvore pela esquerda
+			auxSecundaria += printLineTree(nodePrincipal.getRight().getInfo(), valor3, valor2);
 		}
-		aux += aux2;
-		return aux;
+		//concatenando
+		auxRetorno += auxSecundaria;
+		return auxRetorno;
 	}
-
-	public String retornaTree(int valor, int valor2) throws ArvoreVaziaException, NaoExisteException {
+	//Retorna os sobrinhos
+	public String getSobrinhos(int valor) throws ArvoreVaziaException, NaoExisteException{
+		//raiz não tem sobrinhos (FRAN: n sei se precisar ser Exception)
+		if(valor == raiz.getInfo()){
+			return "não tem sobrinhos";
+		}
+		//usando o metodo recursivo para pegar os sobrinhos
+		return printLineTree(raiz.getInfo(),valor,getDepth(valor)+1);
+	}
+	//metodo para imprimir a partir da profundidade Usado no Imprimir
+	public String printLineTree(int valor, int valor2) throws ArvoreVaziaException, NaoExisteException {
+		//atributos
 		BinaryTreeNode node = find(valor);
-		//String space= "";
+		//FRAN:Bota exception aqui
 		if (node == null) {
 			return "";
 		}
+		//atributo
 		String aux = "";
-		/*for(int i = this.Height();i!=0;i--){
-			space+= " ";
-		}*/
+		//imprimindo a linha em questão
 		if (getDepth(valor) == valor2){
 			aux = node.getInfo() + " ";
-		}String aux2 = "   ";
+		}String aux2 = "";
+		//percorrendo a arvore em ordem
 		if (node.getLeft() != null) {
-			aux2 += retornaTree(node.getLeft().getInfo(), valor2);
+			//indo pra esquerda 
+			aux2 += printLineTree(node.getLeft().getInfo(), valor2);
 		}
 		if (node.getRight() != null) {
-			aux2 += retornaTree(node.getRight().getInfo(), valor2);
+			//indo pra direita
+			aux2 += printLineTree(node.getRight().getInfo(), valor2);
 		}
+		//concatenando
 		aux += aux2;
 		return aux;
 	}
 	
-
+//Fran e contigo
 	public void imprimirTree() throws ArvoreVaziaException, NaoExisteException {
 		int aux = maxHeight();
 		//int i,j;
@@ -381,18 +394,12 @@ public class Tree {
 			for ( int j = 0; j < aux-i; j++) {
 				System.out.print("\t");
 			}
-			System.out.println(retornaTree(this.raiz.getInfo(), i));
+			System.out.println(printLineTree(this.raiz.getInfo(), i));
 			
 		}
 	}
 
-	public int powOrder2(int valor) {
-		int aux = 1;
-		for (int i = 0; i < valor; i++) {
-			aux *= 2;
-		}
-		return aux;
-	}
+	
 
 	// private BinaryTreeNode getMaior(){
 	//
