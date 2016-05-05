@@ -3,33 +3,41 @@ package arvore;
 import exceptions.*;
 
 public class Tree {
-	//ATRIBUTO SHOW
+	// ATRIBUTO SHOW
 	public BinaryTreeNode raiz;
 
-	//METODOS SHOWS
-	public void insert(int valor) throws ArvoreVaziaException, ElementoExistenteException{
+	// METODOS SHOWS
+	public void insert(int valor) throws ArvoreVaziaException, ElementoExistenteException {
 		BinaryTreeNode aux = raiz;
 		BinaryTreeNode valorNode = new BinaryTreeNode(valor);
-		//quando a arvore estiver vazia
-		if(raiz == null){
+		// quando a arvore estiver vazia
+		if (raiz == null) {
 			raiz = valorNode;
+			System.out.println("raiz: " + valor);
 			return;
 		}
 
-		else if(exists(valor)) throw new ElementoExistenteException("O elemento ja existe.");
+		else if (exists(valor))
+			throw new ElementoExistenteException("O elemento ja existe.");
 
-		else{
-			//loop
-			while(true){
-				if(valor > aux.getInfo()){
-					if(aux.getRight() != null) aux = aux.getRight();
-					else{
+		else {
+			// loop
+			while (true) {
+				if (valor > aux.getInfo()) {
+					if (aux.getRight() != null) {
+						System.out.println(aux.getInfo() + " direita " + aux.getRight().getInfo());
+						aux = aux.getRight();
+					} else {
+						System.out.println(aux.getInfo() + " direita " + valor + " fim");
 						aux.setRight(valorNode);
 						return;
 					}
-				}else if (valor < aux.getInfo()){
-					if(aux.getLeft() != null ) aux = aux.getLeft();
-					else{ 
+				} else if (valor < aux.getInfo()) {
+					if (aux.getLeft() != null) {
+						System.out.println(aux.getInfo() + " esquerda " + aux.getLeft().getInfo());
+						aux = aux.getLeft();
+					} else {
+						System.out.println(aux.getInfo() + " esquerda " + valor + " fim");
 						aux.setLeft(valorNode);
 						return;
 					}
@@ -38,175 +46,264 @@ public class Tree {
 		}
 	}
 
-	public BinaryTreeNode find(int valor) throws ArvoreVaziaException, NaoExisteException{
+	public BinaryTreeNode find(int valor) throws ArvoreVaziaException, NaoExisteException {
 		// se nao existe o valor na arvore
-		if(!exists(valor)) throw new NaoExisteException("O elemento nao existe.");
+		if (!exists(valor))
+			throw new NaoExisteException("O elemento nao existe.");
 		// se a arvore estiver vazia
-		else if(raiz == null) throw new ArvoreVaziaException("A arvore esta vazia");
-		else{
+		else if (raiz == null)
+			throw new ArvoreVaziaException("A arvore esta vazia");
+		else {
 			// criando no auxiliar
 			BinaryTreeNode aux = raiz;
 			do {
-				// verificando se o valor atual eh igual ao valor recebido como parametro
-				if(valor == aux.getInfo()) return aux;
+				// verificando se o valor atual eh igual ao valor recebido como
+				// parametro
+				if (valor == aux.getInfo())
+					return aux;
 				// andando pela arvore em busca do valor, que existe.
 				else if (valor > aux.getInfo()) {
 					aux = aux.getRight();
 				} else {
 					aux = aux.getLeft();
 				}
-			}while(true);
+			} while (true);
 		}
 	}
-	public boolean exists(int valor) throws ArvoreVaziaException{
+
+	public boolean exists(int valor) throws ArvoreVaziaException {
 		// se a arvore estiver vazia, nao tem pra que procurar pela existencia.
-		if(raiz == null) throw new ArvoreVaziaException("A arvore esta vazia");
+		if (raiz == null)
+			throw new ArvoreVaziaException("A arvore esta vazia");
 		// criando no auxiliar
 		BinaryTreeNode aux = raiz;
 
-		while(aux != null){
-			// Mesmo esquema do metodo "find()", porem dessa vez, se encontrado, retornara "true"
-			if(valor == aux.getInfo()) return true;
+		while (aux != null) {
+			// Mesmo esquema do metodo "find()", porem dessa vez, se encontrado,
+			// retornara "true"
+			if (valor == aux.getInfo())
+				return true;
 			if (valor > aux.getInfo()) {
 				aux = aux.getRight();
-			} else if(valor < aux.getInfo()) {
+			} else if (valor < aux.getInfo()) {
 				aux = aux.getLeft();
 			}
 		}
 		return false;
 	}
 
-	public void remove(int valor) throws ArvoreVaziaException, NaoExisteException{
-		BinaryTreeNode aux = find(valor);
+	public void remove(int a) throws ArvoreVaziaException, NaoExisteException {
+		// auxiliares
+		BinaryTreeNode aux = find(a);
+		BinaryTreeNode dad = getFather(a);
+		// auxiliares para fazerem a subistituição
+		BinaryTreeNode auxSubs = getSubstitute(a);
+		BinaryTreeNode dadSubs = getFather(auxSubs.getInfo());
+		// se for Raiz
+		if (aux == raiz) {
+			// Caso o nó substituto seja uma folha
+			if (auxSubs.getLeft() == null && auxSubs.getRight() == null) {
+				// deixando nulo o local on a auxiliar que vai servir de
+				// substituta ficava e deixando null
+				if (dadSubs.getLeft() == auxSubs)
+					dadSubs.setLeft(null);
+				else if (dadSubs.getRight() == auxSubs)
+					dadSubs.setRight(null);
+			}
+			// pegando filho da auxiliar que vai servir de substituta e botando
+			// como ramo do pai dela no lugar onde ela ficava
+			else if (auxSubs.getLeft() != null)
+				dadSubs.setRight(auxSubs.getLeft());
+			else if (auxSubs.getRight() != null)
+				dadSubs.setLeft(auxSubs.getRight());
+			// botando auxiliar no lugar da raiz
+			auxSubs.setLeft(raiz.getLeft());
+			auxSubs.setRight(raiz.getRight());
+			raiz = auxSubs;
+		}
+		// se for Folha
+		else if (aux.getLeft() == null && aux.getRight() == null) {
+			// apagando a folha
+			if (dad.getLeft().getInfo() == a)
+				dad.setLeft(null);
+			else if (dad.getRight().getInfo() == a)
+				dad.setRight(null);
+		}
+		// se tiver um filho(direita)
+		else if (aux.getLeft() == null) {
 
-		if(!exists(valor)) throw new NaoExisteException("O valor nao existe.");
-
-		// se tiver dois filhos
-		if( (aux.getRight() != null) && (aux.getLeft() != null) ){
-			//BinaryTreeNode auxMenor = getMenor();
-			// pai do menor, para nao perder os possiveis filhos do menor
-		//	BinaryTreeNode auxFather = getFather(getMenor().getInfo());
-			// pai do no a ser excluido
-			BinaryTreeNode auxFather2 = getFather(aux.getInfo());
+			// se o substituto for filho do nó(ou seja se ele for para
+			// direita e o filho dele não ter filhos a esquerda)
+			if (dad.getLeft() != null && dad.getLeft().getInfo() == aux.getInfo())
+				dad.setLeft(auxSubs);
+			else if (dad.getRight() != null && dad.getRight().getInfo() == aux.getInfo())
+				dad.setRight(auxSubs);
 
 		}
-
-		// se for folha
-		else if( (aux.getLeft() == null) && (aux.getRight() == null) ){
-			//auxiliar2
-			BinaryTreeNode pai = getFather(aux.getInfo());
-			// caso seja o filho da direita que queremos remover
-			if( (pai.getRight() != null) && (pai.getRight().getInfo() == aux.getInfo()) ){
-				pai.setRight(null);
-			}else{
-				pai.setLeft(null);
+		// se tiver um filho(esquerda)
+		else if (aux.getRight() == null) {
+			// se o substituto for filho do nó(ou seja se ele for para esquerda
+			// e o filho dele não ter filhos a direita)
+			if (aux.getLeft().getInfo() == auxSubs.getInfo()) {
+				if (dad.getRight() == aux)
+					dad.setRight(auxSubs);
+				else if (dad.getLeft() == aux)
+					dad.setLeft(auxSubs);
+			} else {
+				// substituindo o auxiliar pelo seu filho esquerdo ou nulo se n
+				// tiver
+				if (auxSubs.getLeft() != null) {
+					dadSubs.setRight(auxSubs.getLeft());
+				} else {
+					dadSubs.setRight(null);
+				}
+				// caso o nó a ser removido tiver filho a direita
+				auxSubs.setLeft(aux.getLeft());
+				if (dad.getLeft() == aux)
+					dad.setLeft(auxSubs);
+				else if (dad.getRight() == aux)
+					dad.setRight(auxSubs);
+			}
+		}
+		// se tiver 2 filhos
+		else if (aux.getLeft() != null && aux.getRight() != null) {
+			// ele vai pra esquerda pois esse é o padrão que vamos usar
+			// se o substituto for filho do nó(ou seja se ele for para esquerda
+			// e o filho dele não ter filhos a direita)
+			if (aux.getLeft().getInfo() == auxSubs.getInfo()) {
+				// caso o filho a esquerda não tenha filhos a direita
+				if (aux.getRight() != null) {
+					// botando o filho a direita do nó a ser substituido no
+					// substituto dele
+					auxSubs.setRight(aux.getRight());
+				}
+				if (dad.getRight() == aux)
+					dad.setRight(auxSubs);
+				else if (dad.getLeft() == aux)
+					dad.setLeft(auxSubs);
+			} else {
+				// substituindo o auxiliar pelo seu filho esquerdo ou nulo se n
+				// tiver
+				if (auxSubs.getLeft() != null) {
+					dadSubs.setRight(auxSubs.getLeft());
+				} else {
+					dadSubs.setRight(null);
+				}
+				// botando os dado do nó removido no substituto
+				auxSubs.setLeft(aux.getLeft());
+				auxSubs.setRight(aux.getRight());
+				if (dad.getLeft() == aux)
+					dad.setLeft(auxSubs);
+				else if (dad.getRight() == aux)
+					dad.setRight(auxSubs);
 			}
 
-			return;
-			// quando tiver apenas um filho e ele estiver na esquerda
-		}else if( ((aux.getRight() == null) && (aux.getLeft() != null)) ){
-			//variaveis auxiliares
-			BinaryTreeNode auxValor = raiz;
-			BinaryTreeNode auxFather;
-			BinaryTreeNode auxFilho;
-			//loop
-			do{
-				if(valor == auxValor.getInfo()){
-					auxFather = getFather(auxValor.getInfo());
-					if(auxFather != null){
-						if(auxFather.getInfo() > auxValor.getInfo()) auxFather.setLeft(auxValor.getLeft());
-						else if(auxFather.getInfo() < auxValor.getInfo()) auxFather.setRight(auxValor.getLeft());
-						auxValor = null;
-						// tentou deletar a raiz
-					}else{
-						raiz = raiz.getLeft();
-					}
-				}else if (valor > auxValor.getInfo()) {
-					auxValor = auxValor.getRight();
-				} else{
-					auxValor = auxValor.getLeft();
-				}
-			}while(auxValor != null);
-			return;
-			//quando tiver apenas um filho e ele estiver na direita
-		}else if( (aux.getRight() != null) && (aux.getLeft() == null) ){
-			BinaryTreeNode auxValor = raiz;
-			BinaryTreeNode auxFather;
-			BinaryTreeNode auxFilho;
-			do{
-				if(valor == auxValor.getInfo()){
-					auxFather = getFather(auxValor.getInfo());
-					if(auxFather != null){
-						if(auxFather.getInfo() > auxValor.getInfo()) auxFather.setLeft(auxValor.getRight());
-						else if(auxFather.getInfo() < auxValor.getInfo()) auxFather.setRight(auxValor.getRight());
-						auxValor = null;
-						//foi tentado deletar a raiz
-					}else{
-						raiz = raiz.getRight();
-					}
-				}else if (valor > auxValor.getInfo()) {
-					auxValor = auxValor.getRight();
-				} else if(valor < auxValor.getInfo()) {
-					auxValor = auxValor.getLeft();
-				}
-			}while(auxValor != null);
-			return;
 		}
 	}
 
-	private BinaryTreeNode getFather(int valor) throws NaoExisteException, ArvoreVaziaException{
+	private BinaryTreeNode getFather(int valor) throws NaoExisteException, ArvoreVaziaException {
 
-		if(!exists(valor)) throw new NaoExisteException("O valor nao existe.");
- 		BinaryTreeNode aux = raiz;
- 		if(aux.getInfo() == valor) return null;
+		if (!exists(valor))
+			throw new NaoExisteException("O valor nao existe.");
+		BinaryTreeNode aux = raiz;
+		if (aux.getInfo() == valor)
+			return null;
 		do {
 
-			if( (aux.getRight() != null) && (aux.getLeft() != null) ){
-				if((aux.getRight().getInfo() == valor) || (aux.getLeft().getInfo() == valor)) return aux;
-			}
-			else if( (aux.getRight() != null) && (aux.getLeft() == null)){
-				if(aux.getRight().getInfo() == valor) return aux;
-			}
-			else if( (aux.getRight() == null) && (aux.getLeft() != null ) ){
-				if(aux.getLeft().getInfo() == valor) return aux;
+			if ((aux.getRight() != null) && (aux.getLeft() != null)) {
+				if ((aux.getRight().getInfo() == valor) || (aux.getLeft().getInfo() == valor))
+					return aux;
+			} else if ((aux.getRight() != null) && (aux.getLeft() == null)) {
+				if (aux.getRight().getInfo() == valor)
+					return aux;
+			} else if ((aux.getRight() == null) && (aux.getLeft() != null)) {
+				if (aux.getLeft().getInfo() == valor)
+					return aux;
 			}
 
 			if (valor > aux.getInfo()) {
 				aux = aux.getRight();
-			} else if(valor < aux.getInfo()) {
+			} else if (valor < aux.getInfo()) {
 				aux = aux.getLeft();
-			}	
+			}
 
-		}while(aux != null);
+		} while (aux != null);
 		return null;
 	}
 
-//	private BinaryTreeNode getMaior(){
+	public BinaryTreeNode getSubstitute(int a) throws ArvoreVaziaException, NaoExisteException {
+		BinaryTreeNode aux = this.find(a);
+		boolean verif = false;
+		do {
+			if (!verif) {
+				// veifica se o nó a esquerda não é nulo
+				if (aux.getLeft() != null) {
+					aux = aux.getLeft();
+					verif = true;
+				}
+				// veifica se o nó a direita não é nulo(a 1 verificação já
+				// falhou)
+				else if (aux.getRight() != null) {
+					aux = aux.getRight();
+					return aux;
+				}
+				// caso ele não tenha filhos
+				else {
+					return aux;
+				}
+			}
+			// pegando o maior filho a direita(getMaior())
+			else if (verif) {
+				if (aux.getRight() != null) {
+					aux = aux.getRight();
+				} else {
+					return aux;
+				}
+			}
+		} while (true);
+
+	}
+
+	public int altura(int a) throws ArvoreVaziaException, NaoExisteException {
+		BinaryTreeNode node = find(a);
+        if (node == null)
+            return 0;
+
+        return Math.max(altura(node.getLeft().getInfo()),altura(node.getRight().getInfo())) + 1;
+    }
+
+
+// private BinaryTreeNode getMaior(){
 //
-//	}
+// }
 //
-//	private BinaryTreeNode getMenor(){
+// private BinaryTreeNode getMenor(){
 //
-//	}
+// }
 
-/* EXPLICACAO PARA CAIO!! 
-
-	Ha 3 situacoes para o remover. Sendo elas quando o no eh uma folha, quando o no tem um filho apenas
-	e quando ele tem dois filhos.
-
-	Eh necessario implementar esses metodos getMaior() e getMenor() para usar o remover. Para fazermos um caso geral,
-	pois do jeito que eu estava fazendo antes, nao funcionava quando o no era uma raiz.
-
-	Seria bom tambem utilizar o getMaior() e getMenor() mesmo quando o no possui apenas um filho, dai poderia fazer um if
-	para checar em qual lado estaria o filho.
-
-	Quanto ao getMaior() e getMenor(), o primeiro pega o maior da esquerda e o segundo pega o menor a direita.
-
-	Tenta implementar eles o quanto antes, pois ai vai ficar facil. E assim que terminarmos o remover, ja sabemos
-	como fazer o segundo topico do projeto. E ai eh soh ficar pensando no terceiro.
-
-	Valeu.
-	
-*/
+/*
+ * EXPLICACAO PARA CAIO!!
+ * 
+ * Ha 3 situacoes para o remover. Sendo elas quando o no eh uma folha, quando o
+ * no tem um filho apenas e quando ele tem dois filhos.
+ * 
+ * Eh necessario implementar esses metodos getMaior() e getMenor() para usar o
+ * remover. Para fazermos um caso geral, pois do jeito que eu estava fazendo
+ * antes, nao funcionava quando o no era uma raiz.
+ * 
+ * Seria bom tambem utilizar o getMaior() e getMenor() mesmo quando o no possui
+ * apenas um filho, dai poderia fazer um if para checar em qual lado estaria o
+ * filho.
+ * 
+ * Quanto ao getMaior() e getMenor(), o primeiro pega o maior da esquerda e o
+ * segundo pega o menor a direita.
+ * 
+ * Tenta implementar eles o quanto antes, pois ai vai ficar facil. E assim que
+ * terminarmos o remover, ja sabemos como fazer o segundo topico do projeto. E
+ * ai eh soh ficar pensando no terceiro.
+ * 
+ * Valeu.
+ * 
+ */
 
 }
